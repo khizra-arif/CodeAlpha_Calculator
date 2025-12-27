@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            padding: 20px;
+        }
+
+        .calculator-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 1.8rem;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .display-container {
+            margin-bottom: 20px;
+        }
+
+        .calculation-display {
+            width: 100%;
+            min-height: 30px;
+            padding: 10px 15px;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            text-align: right;
+            border-radius: 10px 10px 0 0;
+            word-wrap: break-word;
+            overflow: hidden;
+        }
+
+        .result-display {
+            width: 100%;
+            height: 80px;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.4);
+            color: white;
+            font-size: 2.5rem;
+            text-align: right;
+            border-radius: 0 0 10px 10px;
+            overflow: hidden;
+            margin-bottom: 5px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 15px;
+        }
+
+        button {
+            height: 65px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .number-btn, .decimal-btn {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        .number-btn:hover, .decimal-btn:hover {
+            background-color: white;
+        }
+
+        .operator-btn {
+            background-color: #ff9500;
+            color: white;
+        }
+
+        .operator-btn:hover {
+            background-color: #ffaa33;
+        }
+
+        .equals-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .equals-btn:hover {
+            background-color: #27ae60;
+        }
+
+        .clear-btn, .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .clear-btn:hover, .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .span-two {
+            grid-column: span 2;
+        }
+
+        .keyboard-hint {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+        }
+
+        .keyboard-hint kbd {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 0 2px;
+        }
+
+        .operator-active {
+            background-color: white !important;
+            color: #ff9500 !important;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 20px;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 480px) {
+            .calculator-container {
+                padding: 15px;
+            }
+            
+            button {
+                height: 60px;
+                font-size: 1.2rem;
+            }
+            
+            .result-display {
+                height: 70px;
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <h1><i class="fas fa-calculator"></i> Modern Calculator</h1>
+        <p class="subtitle">Supports mouse, touch, and keyboard input</p>
+        
+        <div class="display-container">
+            <div class="calculation-display" id="calculation"></div>
+            <div class="result-display" id="display">0</div>
+        </div>
+        
+        <div class="buttons-grid">
+            <button class="clear-btn span-two" id="clear">AC</button>
+            <button class="delete-btn" id="delete"><i class="fas fa-backspace"></i></button>
+            <button class="operator-btn" data-operation="÷">÷</button>
+            
+            <button class="number-btn" data-number="7">7</button>
+            <button class="number-btn" data-number="8">8</button>
+            <button class="number-btn" data-number="9">9</button>
+            <button class="operator-btn" data-operation="×">×</button>
+            
+            <button class="number-btn" data-number="4">4</button>
+            <button class="number-btn" data-number="5">5</button>
+            <button class="number-btn" data-number="6">6</button>
+            <button class="operator-btn" data-operation="-">−</button>
+            
+            <button class="number-btn" data-number="1">1</button>
+            <button class="number-btn" data-number="2">2</button>
+            <button class="number-btn" data-number="3">3</button>
+            <button class="operator-btn" data-operation="+">+</button>
+            
+            <button class="number-btn span-two" data-number="0">0</button>
+            <button class="decimal-btn" id="decimal">.</button>
+            <button class="equals-btn" id="equals">=</button>
+        </div>
+        
+        <div class="keyboard-hint">
+            <p><i class="fas fa-keyboard"></i> Keyboard support: Use numbers, +, -, *, /, Enter (=), Escape (AC), Backspace (DEL)</p>
+        </div>
+        
+        <footer>
+            <p>Calculator with real-time calculation display & keyboard support</p>
+        </footer>
+    </div>
+
+    <script>
+        // Calculator state variables
+        let currentOperand = '';
+        let previousOperand = '';
+        let operation = null;
+        let resetScreen = false;
+
+        // DOM Elements
+        const display = document.getElementById('display');
+        const calculationDisplay = document.getElementById('calculation');
+        const numberButtons = document.querySelectorAll('[data-number]');
+        const operatorButtons = document.querySelectorAll('[data-operation]');
+        const equalsButton = document.getElementById('equals');
+        const clearButton = document.getElementById('clear');
+        const deleteButton = document.getElementById('delete');
+        const decimalButton = document.getElementById('decimal');
+
+        // Event Listeners for buttons
+        numberButtons.forEach(button => {
+            button.addEventListener('click', () => appendNumber(button.dataset.number));
+        });
+
+        operatorButtons.forEach(button => {
+            button.addEventListener('click', () => setOperation(button.dataset.operation));
+        });
+
+        equalsButton.addEventListener('click', calculate);
+        clearButton.addEventListener('click', clear);
+        deleteButton.addEventListener('click', deleteNumber);
+        decimalButton.addEventListener('click', appendDecimal);
+
+        // Keyboard support
+        document.addEventListener('keydown', handleKeyboardInput);
+
+        // Button functions
+        function appendNumber(number) {
+            if (display.textContent === '0' || resetScreen) {
+                display.textContent = '';
+                resetScreen = false;
+            }
+            display.textContent += number;
+            updateCalculationDisplay();
+        }
+
+        function appendDecimal() {
+            if (resetScreen) {
+                display.textContent = '0';
+                resetScreen = false;
+            }
+            if (display.textContent.includes('.')) return;
+            if (display.textContent === '') {
+                display.textContent = '0';
+            }
+            display.textContent += '.';
+            updateCalculationDisplay();
+        }
+
+        function deleteNumber() {
+            if (display.textContent.length === 1) {
+                display.textContent = '0';
+            } else {
+                display.textContent = display.textContent.slice(0, -1);
+            }
+            updateCalculationDisplay();
+        }
+
+        function setOperation(op) {
+            if (display.textContent === '') return;
+            
+            if (operation !== null && !resetScreen) {
+                calculate();
+            }
+            
+            // Update active operator button
+            operatorButtons.forEach(button => button.classList.remove('operator-active'));
+            event.target.classList.add('operator-active');
+            
+            operation = op;
+            previousOperand = display.textContent;
+            resetScreen = true;
+            updateCalculationDisplay();
+        }
+
+        function calculate() {
+            if (operation === null || resetScreen) return;
+            
+            const prev = parseFloat(previousOperand);
+            const current = parseFloat(display.textContent);
+            
+            if (isNaN(prev) || isNaN(current)) return;
+            
+            let result;
+            switch (operation) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '−':
+                    result = prev - current;
+                    break;
+                case '×':
+                    result = prev * current;
+                    break;
+                case '÷':
+                    if (current === 0) {
+                        alert("Cannot divide by zero!");
+                        clear();
+                        return;
+                    }
+                    result = prev / current;
+                    break;
+                default:
+                    return;
+            }
+            
+            // Format result to avoid floating point precision issues
+            result = Math.round(result * 100000000) / 100000000;
+            
+            display.textContent = result;
+            calculationDisplay.textContent = `${previousOperand} ${operation} ${current} =`;
+            operation = null;
+            previousOperand = '';
+            resetScreen = true;
+            
+            // Remove active operator highlight
+            operatorButtons.forEach(button => button.classList.remove('operator-active'));
+        }
+
+        function clear() {
+            display.textContent = '0';
+            calculationDisplay.textContent = '';
+            currentOperand = '';
+            previousOperand = '';
+            operation = null;
+            resetScreen = false;
+            
+            // Remove active operator highlight
+            operatorButtons.forEach(button => button.classList.remove('operator-active'));
+        }
+
+        function updateCalculationDisplay() {
+            if (operation !== null) {
+                calculationDisplay.textContent = `${previousOperand} ${operation} ${display.textContent}`;
+            } else {
+                calculationDisplay.textContent = display.textContent;
+            }
+        }
+
+        // Keyboard input handler
+        function handleKeyboardInput(e) {
+            // Prevent default behavior for calculator keys
+            if (
+                (e.key >= '0' && e.key <= '9') || 
+                e.key === '.' || 
+                ['+', '-', '*', '/', 'Enter', 'Escape', 'Backspace'].includes(e.key)
+            ) {
+                e.preventDefault();
+            }
+            
+            // Number keys
+            if (e.key >= '0' && e.key <= '9') {
+                appendNumber(e.key);
+            }
+            
+            // Decimal point
+            if (e.key === '.') {
+                appendDecimal();
+            }
+            
+            // Operations
+            if (e.key === '+') {
+                setOperation('+');
+            }
+            if (e.key === '-') {
+                setOperation('−');
+            }
+            if (e.key === '*') {
+                setOperation('×');
+            }
+            if (e.key === '/') {
+                setOperation('÷');
+            }
+            
+            // Enter key for equals
+            if (e.key === 'Enter') {
+                calculate();
+            }
+            
+            // Escape key for clear
+            if (e.key === 'Escape') {
+                clear();
+            }
+            
+            // Backspace for delete
+            if (e.key === 'Backspace') {
+                deleteNumber();
+            }
+            
+            // Highlight the corresponding operator button
+            if (['+', '-', '*', '/'].includes(e.key)) {
+                operatorButtons.forEach(button => button.classList.remove('operator-active'));
+                let operatorSymbol;
+                switch(e.key) {
+                    case '+': operatorSymbol = '+'; break;
+                    case '-': operatorSymbol = '−'; break;
+                    case '*': operatorSymbol = '×'; break;
+                    case '/': operatorSymbol = '÷'; break;
+                }
+                const activeButton = document.querySelector(`[data-operation="${operatorSymbol}"]`);
+                if (activeButton) activeButton.classList.add('operator-active');
+            }
+        }
+
+        // Initialize calculator
+        clear();
+    </script>
+</body>
+</html>
